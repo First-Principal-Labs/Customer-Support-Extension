@@ -17,6 +17,7 @@ export const DEFAULT_GENERAL_SETTINGS: GeneralSettings = {
   theme: 'system',
   toolbarPosition: 'bottom-right',
   autoDetectSelectors: true,
+  contextMessages: 10,
 };
 
 export const AI_MODELS: Record<string, string[]> = {

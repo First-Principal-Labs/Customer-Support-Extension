@@ -27,6 +27,8 @@ export interface GeneralSettings {
   theme: ThemeMode;
   toolbarPosition: 'bottom-right' | 'bottom-left';
   autoDetectSelectors: boolean;
+  /** How many previous user+assistant messages to include when refining. Range: 2–25. */
+  contextMessages: number;
 }
 
 export type MessageType =

@@ -4,15 +4,17 @@ import TabNav from './components/TabNav.tsx';
 import ApiKeySettings from './pages/ApiKeySettings.tsx';
 import PageRules from './pages/PageRules.tsx';
 import GeneralSettings from './pages/GeneralSettings.tsx';
+import History from './pages/History.tsx';
 import { useStorage } from './hooks/useStorage.ts';
 import { STORAGE_KEYS, DEFAULT_GENERAL_SETTINGS, DEFAULT_AI_CONFIG } from '@shared/constants.ts';
 import type { GeneralSettings as GeneralSettingsType, AIConfig } from '@shared/types.ts';
 
-type TabId = 'apiKey' | 'pageRules' | 'settings';
+type TabId = 'apiKey' | 'pageRules' | 'settings' | 'history';
 
 const TABS: { id: TabId; label: string }[] = [
   { id: 'apiKey', label: 'API Key' },
   { id: 'pageRules', label: 'Page Rules' },
+  { id: 'history', label: 'History' },
   { id: 'settings', label: 'Settings' },
 ];
 
@@ -54,6 +56,7 @@ export default function App() {
       <main className="popup-content">
         {activeTab === 'apiKey' && <ApiKeySettings />}
         {activeTab === 'pageRules' && <PageRules />}
+        {activeTab === 'history' && <History />}
         {activeTab === 'settings' && <GeneralSettings />}
       </main>
     </div>

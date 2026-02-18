@@ -121,6 +121,31 @@ export default function GeneralSettings() {
         </label>
       </div>
 
+      <div className="setting-row setting-row--column">
+        <div className="setting-row-header">
+          <div>
+            <div className="setting-label">Refinement Context</div>
+            <div className="setting-desc">Previous messages sent to AI when refining a response</div>
+          </div>
+          <span className="setting-value-badge">
+            Last {settings.contextMessages ?? 10} messages
+          </span>
+        </div>
+        <input
+          type="range"
+          min={2}
+          max={25}
+          step={1}
+          value={settings.contextMessages ?? 10}
+          onChange={(e) => update({ contextMessages: Number(e.target.value) })}
+          className="setting-slider"
+        />
+        <div className="setting-slider-labels">
+          <span>2</span>
+          <span>25</span>
+        </div>
+      </div>
+
       <div style={{ marginTop: '16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
         <div style={{ display: 'flex', gap: '8px' }}>
           <button className="btn btn-secondary btn-sm" onClick={handleExport}>

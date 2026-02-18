@@ -15,7 +15,7 @@ import {
   ChevronUp,
 } from 'lucide-react';
 import type { PageRule, AIConfig, GeneralSettings, AIRequestMessage } from '@shared/types.ts';
-import { getAIConfig, getPageRules, getGeneralSettings, getConversationSession, saveConversationSession, clearConversationSession } from '@shared/storage.ts';
+import { getAIConfig, getPageRules, getGeneralSettings, getConversationSession, saveConversationSession } from '@shared/storage.ts';
 import { STORAGE_KEYS } from '@shared/constants.ts';
 import { findMatchingRule } from '@shared/url-matcher.ts';
 import { streamChatCompletion } from '@shared/ai-client.ts';
@@ -320,8 +320,12 @@ export default function AutofillToolbar() {
       : undefined;
 
     const systemContent = buildSystemPrompt(rule, resolvedMemory);
+    const session = await getConversationSession(rule.id, window.location.pathname);
+    const contextLimit = settings?.contextMessages ?? 10;
+    const prior = session?.messages?.slice(-contextLimit) ?? [];
     const messages: AIRequestMessage[] = [
       { role: 'system', content: systemContent },
+      ...prior,
       { role: 'user', content: `Customer query:\n${query}` },
     ];
 
@@ -366,8 +370,13 @@ export default function AutofillToolbar() {
     setStatus('generating');
     setError('');
 
+    // Apply context window: keep system message + last N user/assistant messages
+    const contextLimit = settings?.contextMessages ?? 10;
+    const [systemMsg, ...rest] = conversationHistory;
+    const trimmed = systemMsg ? [systemMsg, ...rest.slice(-contextLimit)] : rest.slice(-contextLimit);
+
     const messages: AIRequestMessage[] = [
-      ...conversationHistory,
+      ...trimmed,
       { role: 'user', content: instruction },
     ];
 
@@ -406,7 +415,7 @@ export default function AutofillToolbar() {
       return;
     }
     fillResponseField(responseEl, preview);
-    if (rule) await clearConversationSession(rule.id, window.location.pathname);
+    // Keep conversation in history - don't clear it
     setStatus('idle');
     setPreview('');
     setIsRestored(false);
@@ -433,7 +442,7 @@ export default function AutofillToolbar() {
     const sendBtn = findSendButton();
     if (sendBtn) {
       sendBtn.click();
-      if (rule) await clearConversationSession(rule.id, window.location.pathname);
+      // Keep conversation in history - don't clear it
       setStatus('idle');
       setPreview('');
       setIsRestored(false);
